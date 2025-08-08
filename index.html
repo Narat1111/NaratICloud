@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Copy iCloud& Password — NaratStore</title>
+  <style>
+    :root{
+      --bg-1: #04152b;
+      --bg-2: #0b3b6b;
+      --accent: #27a6ff;
+      --glow: rgba(39,166,255,0.22);
+      --card: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.04);
+      --text: #eaf6ff;
+      --muted: rgba(234,246,255,0.6);
+    }
+
+    *{box-sizing:border-box;font-family:Inter, system-ui, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial;}
+    html,body{height:100%;margin:0;background:linear-gradient(135deg,var(--bg-1),var(--bg-2));color:var(--text);-webkit-font-smoothing:antialiased;}
+
+    .container{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px;}
+
+    .topbar{display:flex;align-items:center;gap:16px;width:100%;max-width:980px;}
+    .logo{width:56px;height:56px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.06);box-shadow:0 6px 24px rgba(5,20,40,0.6);}
+    .title{font-size:20px;margin:0;color:var(--text);text-shadow:0 6px 18px var(--glow);}
+
+    .card{width:100%;max-width:980px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 40px rgba(2,10,30,0.6);}
+
+    .desc{margin:0 0 12px 0;color:rgba(234,246,255,0.9);font-size:14px}
+
+    .account{display:flex;gap:18px;align-items:flex-start;padding:12px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.02);}
+
+    .avatar-wrap{flex:0 0 84px;display:flex;align-items:center;justify-content:center;}
+    .avatar{width:84px;height:84px;border-radius:12px;object-fit:cover;border:2px solid rgba(39,166,255,0.12);box-shadow:0 8px 30px rgba(10,30,60,0.6);}
+
+    .fields{flex:1;display:flex;flex-direction:column;gap:10px;}
+    label{font-size:12px;color:rgba(234,246,255,0.75);}
+
+/* FIELD ROW + INPUT-WRAP: makes inputs visually identical width */
+    .field-row{display:flex;gap:8px;align-items:center;}
+    .input-wrap{position:relative;flex:1;min-width:0;}
+    .input{width:100%;padding:12px 14px;padding-right:140px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:var(--text);outline:none;font-size:14px;box-shadow: inset 0 -6px 18px rgba(2,8,20,0.35);}
+    .input:focus{border-color:var(--accent);box-shadow:0 6px 30px rgba(39,166,255,0.06), 0 0 12px rgba(39,166,255,0.06);}
+
+/* Right-side button group (inside input area) */
+    .btn-group{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;gap:8px;align-items:center;}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);cursor:pointer;font-size:13px;backdrop-filter: blur(6px);transition:transform .12s ease, box-shadow .12s ease;}
+    .btn svg {transform: translateY(1px);opacity:0.95;}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(8,24,48,0.55), 0 0 36px var(--glow);}
+
+/* Smaller fixed-size buttons so spacing is consistent */
+    .toggle-btn{width:64px;height:38px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));font-size:13px;padding:6px 8px;}
+    .copy-btn{padding:8px 10px;background:linear-gradient(90deg, rgba(39,166,255,0.08), rgba(10,120,200,0.04));border:1px solid rgba(39,166,255,0.18);height:38px;border-radius:8px;}
+
+/* Accessibility-only text for screen readers */
+    .sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
+
+/* Meta / toast */
+    .meta{display:flex;align-items:center;gap:12px;margin-top:6px;}
+    .primary{background:linear-gradient(90deg,#1fb6ff,#2f8eff);border:none;color:#04152b;font-weight:600;padding:10px 14px;border-radius:12px;box-shadow:0 12px 40px rgba(47,142,255,0.18);cursor:pointer;}
+    .toast{min-width:140px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.03);color:var(--text);font-size:13px;opacity:0;transform:translateY(-8px);transition:all .28s cubic-bezier(.2,.9,.3,1);}
+
+    .toast.show{opacity:1;transform:translateY(0);box-shadow:0 12px 30px rgba(8,24,48,0.5);border:1px solid rgba(39,166,255,0.12);}
+
+    .foot{width:100%;max-width:980px;text-align:center;color:var(--muted);font-size:13px;margin-top:6px;}
+
+    @media(max-width:720px){
+      .account{flex-direction:column;align-items:center;}
+      .avatar-wrap{order:0}
+      .fields{width:100%}
+      .input{padding-right:120px}
+      .btn-group{right:6px}
+      .toggle-btn{width:52px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <!-- ប្ដូរ src ទៅរូបរបស់អ្នក -->
+      <img class="logo" src="https://i.imgur.com/xEKY8Jm.png" alt="Logo (replace src)">
+      <h1 class="title">ICloud Shodowrocket</h1>
+    </header>
+
+    <main class="card">
+      <p class="desc"> <strong></strong>Icloud អាចនឹងផុតកំណត់ចុលអត់កើត។</p>
+
+      <div class="account">
+        <div class="avatar-wrap">
+          <img class="avatar" src="https://i.imgur.com/MtRd3mE.png" alt="avatar">
+        </div>
+
+        <div class="fields">
+          <label for="email1">ICloud</label>
+          <div class="field-row">
+            <div class="input-wrap">
+              <input id="email1" class="input" type="text" value="shadow7@isteal-it.com" readonly>
+              <div class="btn-group">
+                <button class="btn copy-btn" data-copy-target="email1" title="Copy Email">
+                  <!-- copy icon (small) -->
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M9 9H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="9" y="3" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="sr-only">Copy ICloud</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <label for="pass1">password</label>
+          <div class="field-row">
+            <div class="input-wrap">
+              <input id="pass1" class="input" type="password" value="PalestinianAreTerrorist5" readonly>
+              <div class="btn-group">
+                <button class="btn toggle-btn" data-toggle-target="pass1" title="Toggle visibility">Show</button>
+                <button class="btn copy-btn" data-copy-target="pass1" title="Copy Password">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M9 9H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="9" y="3" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="sr-only">Copy Password</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="meta">
+            <button id="copyAll" class="btn primary">Copy All</button>
+            <span id="toast" class="toast" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ចម្លង .account ដើម្បីបន្ថែមគណនីផ្សេងទៀត -->
+    </main>
+
+    <footer class="foot">
+      <small>© 2025 NaratStore.</small>
+    </footer>
+  </div>
+
+  <script>
+    // Single-file JavaScript
+    document.addEventListener('click', (e) => {
+      const copyBtn = e.target.closest('.copy-btn');
+      if (copyBtn) {
+        const targetId = copyBtn.dataset.copyTarget;
+        if (targetId) copyToClipboardById(targetId, copyBtn);
+      }
+
+      const toggleBtn = e.target.closest('.toggle-btn');
+      if (toggleBtn) {
+        const targetId = toggleBtn.dataset.toggleTarget;
+        if (targetId) togglePasswordVisibility(targetId, toggleBtn);
+      }
+    });
+
+    document.getElementById('copyAll').addEventListener('click', () => {
+      const email = document.getElementById('email1').value;
+      const pass = document.getElementById('pass1').value;
+      const combined = `Email: ${email}\nPassword: ${pass}`;
+      navigator.clipboard.writeText(combined).then(() => {
+        showToast('Copied email + password ✅');
+        const btn = document.getElementById('copyAll');
+        btn.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.04)' }, { transform: 'scale(1)' }], { duration: 300 });
+      }).catch((err) => {
+        showToast('Failed to copy');
+        console.error(err);
+      });
+    });
+
+    function copyToClipboardById(id, btn) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      const text = input.value;
+      // Use navigator.clipboard if available
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          flashButtonSuccess(btn);
+          showToast('Copied to clipboard ✅');
+        }).catch((err) => {
+          fallbackCopy(text, btn);
+        });
+      } else {
+        fallbackCopy(text, btn);
+      }
+    }
+
+    function fallbackCopy(text, btn) {
+      // legacy fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        const ok = document.execCommand('copy');
+        if (ok) {
+          flashButtonSuccess(btn);
+          showToast('Copied to clipboard ✅');
+        } else {
+          showToast('Cannot copy');
+        }
+      } catch (e) {
+        showToast('Cannot copy');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function togglePasswordVisibility(id, btn) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    function flashButtonSuccess(button) {
+      if (!button) return;
+      button.disabled = true;
+      const original = button.innerHTML;
+      // show check mark temporarily (keeps layout compact)
+      button.innerHTML = '✔';
+      button.style.transform = 'translateY(-2px)';
+      setTimeout(() => {
+        button.innerHTML = original;
+        button.style.transform = '';
+        button.disabled = false;
+      }, 900);
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        t.classList.remove('show');
+      }, 1600);
+    }
+  </script>
+</body>
+</html>
