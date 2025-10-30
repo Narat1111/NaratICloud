@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free account</title>
+  <style>
+    /* NEW: Swapping Poppins for a slightly sharper font and 
+      introducing a neon color palette.
+    */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+    /* Define Neon Color */
+    :root {
+      --neon-blue: #00ffff; /* Bright Cyan/Aqua */
+      --neon-glow: 0 0 15px #00ffff, 0 0 5px #00ffff inset;
+      --dark-bg: #0c1821;
+      --mid-blue: #143642;
+      --text-light: #e0f7fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif; /* Sharp, digital font */
+      color: var(--text-light);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      /* Darker, high-contrast gradient */
+      background: linear-gradient(135deg, var(--dark-bg), #0f2027, var(--mid-blue)); 
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 auto 20px;
+      font-size: 16px;
+      position: relative;
+      max-width: 300px;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      right: 15px;
+      height: 4px;
+      background: var(--neon-blue); /* Neon line */
+      z-index: 0;
+      transform: translateY(-50%);
+      box-shadow: var(--neon-glow);
+    }
+
+    .steps div {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--neon-blue); /* Neon circle */
+      color: var(--dark-bg); /* Dark text for contrast */
+      line-height: 30px;
+      z-index: 1;
+      position: relative;
+      font-weight: bold;
+      box-shadow: var(--neon-glow);
+      transition: background-color 0.3s ease;
+    }
+
+    .steps div:not(.active-step):not(.completed-step) {
+      background: #4a5568; /* Darker grey for inactive steps */
+      color: var(--text-light);
+      box-shadow: none;
+    }
+
+    .steps .completed-step,
+    .steps .active-step {
+      background: var(--neon-blue);
+      color: var(--dark-bg);
+      box-shadow: var(--neon-glow);
+    }
+
+    .robux {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 10px 0;
+      color: var(--text-light);
+      text-shadow: 0 0 10px var(--neon-blue); /* Stronger neon text shadow */
+    }
+
+    .price {
+      text-decoration: line-through;
+      color: #ff6347; /* Tomato red, classic gaming 'error' color */
+    }
+
+    .free {
+      color: #39ff14; /* Neon green */
+      font-weight: bold;
+      text-shadow: 0 0 8px #39ff14;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      max-width: 300px;
+      padding: 10px;
+      margin-top: 19px;
+      border-radius: 0px; /* Sharper corners */
+      border: 1px solid var(--neon-blue);
+      font-size: 16px;
+      background-color: var(--mid-blue);
+      color: var(--text-light);
+      box-shadow: var(--neon-glow);
+      transition: border-color 0.3s ease;
+      font-family: 'Share Tech Mono', monospace; /* Hacking/Terminal font */
+    }
+
+    input[type="text"]::placeholder {
+      color: #88d498; /* Lighter neon green placeholder */
+    }
+
+    input[type="text"]:focus {
+      border-color: #39ff14; /* Focus with neon green */
+      outline: none;
+      box-shadow: 0 0 15px #39ff14 inset;
+    }
+
+    button,
+    .action-btn {
+      margin-top: 20px;
+      background-color: var(--neon-blue);
+      color: var(--dark-bg); /* Dark text for contrast */
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 2px; /* Sharper corners */
+      cursor: pointer;
+      width: 90%;
+      max-width: 300px;
+      text-align: center;
+      display: inline-block;
+      text-decoration: none;
+      box-shadow: var(--neon-glow);
+      font-weight: 700;
+      transition: background-color 0.1s ease, box-shadow 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    button:hover,
+    .action-btn:hover {
+      background-color: #00b3b3; /* Slightly darker cyan */
+      box-shadow: 0 0 25px var(--neon-blue);
+    }
+
+    #loading {
+      display: none; 
+      font-size: 18px;
+      color: var(--neon-blue);
+      margin-top: 20px;
+      text-shadow: 0 0 8px var(--neon-blue);
+      font-family: 'Share Tech Mono', monospace;
+    }
+    
+    #loading2 {
+      display: none; 
+      font-size: 18px;
+      color: #39ff14; /* Neon green loading */
+      margin-top: 20px;
+      text-shadow: 0 0 8px #39ff14;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .credentials-box {
+        background-color: var(--dark-bg);
+        border: 2px solid var(--neon-blue);
+        padding: 20px;
+        border-radius: 0px; /* Sharper corners */
+        max-width: 350px;
+        margin: 20px auto;
+        text-align: left;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        font-family: 'Share Tech Mono', monospace; /* Terminal/Digital font */
+    }
+    .credentials-box p {
+        margin: 5px 0;
+    }
+    .credentials-box span {
+        font-weight: bold;
+        color: var(--neon-blue);
+    }
+    
+    .username {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: var(--text-light);
+      text-shadow: 0 0 6px var(--neon-blue);
+      word-break: break-all;
+    }
+
+    h2 {
+      text-shadow: 0 0 10px var(--neon-blue);
+    }
+
+
+    @media (max-width: 480px) {
+      .steps {
+        font-size: 14px;
+      }
+      /* (Omitted minor media queries for brevity) */
+    }
+  </style>
+</head>
+<body onload="autoAdvanceStep1()">
+  <div id="notification"></div>
+  <h2 style="color:var(--text-light);">FREE ACCOUNT</h2>
+
+  <div id="step1">
+    <div class="steps">
+      <div class="active-step">1</div>
+      <div>2</div>
+      <div>3</div>
+    </div>
+    <div class="robux">Telegram Channel</div>
+    <div>
+      Complete this simple step to get the <span class="free">FREE ACCESS KEY</span>
+    </div>
+    <a href="https://t.me/ratpanelios" target="_blank" class="action-btn" style="max-width: 300px;">
+        ACCESS TELEGRAM
+    </a>
+    <div id="loading">...VERIFYING LINK STATUS... (Auto-advancing in 5)</div>
+  </div>
+
+  <div id="step2" style="display: none;">
+    <div class="steps">
+      <div class="completed-step">1</div>
+      <div class="active-step">2</div>
+      <div>3</div>
+    </div>
+    <div class="robux">DATA ACQUISITION: YouTube Protocol</div>
+    <div>
+      Click the button below to view the required content.
+    </div>
+    <a href="https://www.youtube.com/@Luffyflux" target="_blank" class="action-btn" style="max-width: 300px;" onclick="autoAdvanceStep2()">
+        VIEW YOUTUBE SOURCE DATA
+    </a>
+    <div id="loading2" style="display: none;">...PROCESSING DATA SEQUENCE... (Auto-advancing in 5)</div>
+  </div>
+
+  <div id="step3" style="display: none;">
+    <div class="steps">
+      <div class="completed-step">1</div>
+      <div class="completed-step">2</div>
+      <div class="active-step">3</div>
+    </div>
+    <h2 style="color:var(--text-light);">FINAL STEP: DECRYPT ACCESS CREDENTIALS</h2>
+    <div class="robux">Your E-sign Access:</div>
+    <div>
+      <span class="free">Copy and use these credentials to begin installation.</span>
+    </div>
+    <div class="credentials-box">
+        <p><span>EMAIL:</span> <span id="accessEmail">BloomingFerrell4</span></p>
+        <p><span>PASSWORD:</span> <span id="accessPassword">bs179218</span></p>
+    </div>
+    
+    <button onclick="copyCredentials()">COPY ACCESS INFO</button>
+
+    <div class="username" id="displayInfo" style="margin-top: 20px;">
+        <span id="linkConfirmation">ACCESS GRANTED. SYSTEM READY.</span>
+    </div>
+  </div>
+
+  <script>
+    const ADVANCE_DELAY = 5000; // 5 seconds delay for auto-advance
+
+    // 1. Auto-advance from Step 1 to Step 2
+    function autoAdvanceStep1() {
+        document.getElementById("loading").style.display = "block";
+        setTimeout(() => {
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+        }, ADVANCE_DELAY); 
+    }
+    
+    // 2. Auto-advance from Step 2 to Step 3, triggered by clicking the YouTube link
+    function autoAdvanceStep2() {
+        // Show loading message (you can remove this if you want instant advance)
+        document.getElementById("loading2").style.display = "block";
+        
+        // Advance to step 3 after the delay
+        setTimeout(() => {
+            document.getElementById("step2").style.display = "none";
+            document.getElementById("step3").style.display = "block";
+        }, ADVANCE_DELAY);
+    }
+
+    function copyCredentials() {
+        const email = document.getElementById("accessEmail").innerText;
+        const password = document.getElementById("accessPassword").innerText;
+        // Combine them with clear labels for easy pasting
+        const fullText = `Email: ${email}\nPassword: ${password}`;
+
+        // Use the Clipboard API for modern browsers
+        navigator.clipboard.writeText(fullText).then(() => {
+            alert("Credentials copied to clipboard! You can now use them for installation.");
+        }).catch(err => {
+            // Fallback for older browsers
+            console.error('Could not copy text: ', err);
+            alert("Please manually copy the Email and Password from the screen.");
+        });
+    }
+  </script>
+</body>
+</html>
